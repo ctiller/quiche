@@ -214,6 +214,9 @@ quiche_conn *quiche_conn_new_with_tls(const uint8_t *scid, size_t scid_len,
                                       quiche_config *config, void *ssl,
                                       bool is_server);
 
+// Enables qlog to the specified file descriptor. Unix only.
+int quiche_conn_set_qlog_fd(quiche_conn *conn, int fd);
+
 // Processes QUIC packets received from the peer.
 ssize_t quiche_conn_recv(quiche_conn *conn, uint8_t *buf, size_t buf_len);
 

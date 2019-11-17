@@ -29,6 +29,9 @@ use std::ptr;
 use std::slice;
 use std::sync::atomic;
 
+#[cfg(all(unix, feature = "qlog"))]
+use std::os::unix::io::FromRawFd;
+
 use libc::c_char;
 use libc::c_int;
 use libc::c_void;
@@ -229,6 +232,26 @@ pub extern fn quiche_config_set_cc_algorithm(
     config: &mut Config, algo: cc::Algorithm,
 ) {
     config.set_cc_algorithm(algo);
+}
+
+#[allow(unused_variables)]
+#[no_mangle]
+#[cfg(all(unix, feature = "qlog"))]
+pub extern fn quiche_conn_set_qlog_fd(conn: &mut Connection, fd: c_int) -> c_int {
+    let f = unsafe { std::fs::File::from_raw_fd(fd) };
+    let writer = Some(std::io::BufWriter::new(f));
+
+    if let Some(writer) = writer {
+        conn.set_qlog(
+            std::boxed::Box::new(writer),
+            "quiche-client qlog".to_string(),
+            format!("{} id={}", "quiche-client qlog", conn.trace_id),
+        );
+
+        return 0;
+    }
+
+    -1
 }
 
 #[no_mangle]
