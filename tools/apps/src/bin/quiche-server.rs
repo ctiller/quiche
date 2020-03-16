@@ -287,22 +287,23 @@ fn main() {
                     hex_dump(&scid)
                 );
 
-                let mut conn = quiche::accept(&scid, odcid, &mut config).unwrap();
+                let conn = if cfg!(feature = "qlog") && std::env::var_os("QLOGDIR").is_some() {
+                    let mut conn = quiche::accept(&scid, odcid, &mut config).unwrap();
 
-                // Only bother with qlog if the user specified it.
-                #[cfg(feature = "qlog")]
-                {
-                    if let Some(dir) = std::env::var_os("QLOGDIR") {
-                        let id = hex_dump(&scid);
-                        let writer = make_qlog_writer(&dir, "server", &id);
+                    let dir = std::env::var_os("QLOGDIR").unwrap();
+                    let id = hex_dump(&scid);
+                    let writer = make_qlog_writer(&dir, "server", &id);
 
-                        conn.set_qlog(
-                            std::boxed::Box::new(writer),
-                            "quiche-client qlog".to_string(),
-                            format!("{} id={}", "quiche-client qlog", id),
-                        );
-                    }
-                }
+                    conn.set_qlog(
+                        std::boxed::Box::new(writer),
+                        "quiche-server qlog".to_string(),
+                        format!("{} id={}", "quiche-server qlog", id),
+                    );
+                    conn
+
+                } else {
+                    quiche::accept(&scid, odcid, &mut config).unwrap()
+                };
 
                 let client = Client {
                     conn,
