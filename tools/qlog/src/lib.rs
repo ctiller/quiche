@@ -549,7 +549,7 @@ impl QlogStreamer {
         Ok(())
     }
 
-    /// Return the writer.
+    /// Returns the writer.
     #[allow(clippy::borrowed_box)]
     pub fn writer(&self) -> &Box<dyn std::io::Write> {
         &self.writer
@@ -1326,7 +1326,7 @@ pub enum EventData {
 }
 
 impl EventData {
-    /// Detect if `EventData` contains an array of `QuicFrame`s.
+    /// Detects if `EventData` contains an array of `QuicFrame`s.
     pub fn contains_quic_frames(&self) -> bool {
         // For some EventData variants, the frame array is optional
         // but for others it is mandatory.

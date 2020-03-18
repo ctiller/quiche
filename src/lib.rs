@@ -1614,12 +1614,12 @@ impl Connection {
             q.finish_frames().ok();
         });
 
-        // only log the remote transport parameters once the connection is
+        // Only log the remote transport parameters once the connection is
         // established (i.e. after frames have been fully parsed) and only
-        // once per connection
+        // once per connection.
         if self.is_established() {
             qlog_with!(self.qlog_streamer, q, {
-                // always conclude frame writing
+                // Always conclude frame writing.
                 q.finish_frames().ok();
 
                 if !self.qlogged_peer_params {
