@@ -792,9 +792,9 @@ impl Frame {
                 seq_num.to_string(),
                 retire_prior_to.to_string(),
                 conn_id.len() as u64,
-                "TODO:https://github.com/quiclog/internet-drafts/issues/36"
+                "TODO: https://github.com/quiclog/internet-drafts/issues/36"
                     .to_string(),
-                "TODO:https://github.com/quiclog/internet-drafts/issues/36"
+                "TODO: https://github.com/quiclog/internet-drafts/issues/36"
                     .to_string(),
             ),
 
