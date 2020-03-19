@@ -234,24 +234,17 @@ pub extern fn quiche_config_set_cc_algorithm(
     config.set_cc_algorithm(algo);
 }
 
-#[allow(unused_variables)]
 #[no_mangle]
 #[cfg(all(unix, feature = "qlog"))]
-pub extern fn quiche_conn_set_qlog_fd(conn: &mut Connection, fd: c_int) -> c_int {
+pub extern fn quiche_conn_set_qlog_fd(conn: &mut Connection, fd: c_int) {
     let f = unsafe { std::fs::File::from_raw_fd(fd) };
-    let writer = Some(std::io::BufWriter::new(f));
+    let writer = std::io::BufWriter::new(f);
 
-    if let Some(writer) = writer {
-        conn.set_qlog(
-            std::boxed::Box::new(writer),
-            "quiche-client qlog".to_string(),
-            format!("{} id={}", "quiche-client qlog", conn.trace_id),
-        );
-
-        return 0;
-    }
-
-    -1
+    conn.set_qlog(
+        std::boxed::Box::new(writer),
+        "quiche-client qlog".to_string(),
+        format!("{} id={}", "quiche-client qlog", conn.trace_id),
+    );
 }
 
 #[no_mangle]
