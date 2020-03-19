@@ -1157,10 +1157,10 @@ impl Connection {
         Ok(conn)
     }
 
-    #[cfg(feature = "qlog")]
     /// Sets qlog output to the designated [`Writer`].
     ///
     /// [`Writer`]: https://doc.rust-lang.org/std/io/trait.Write.html
+    #[cfg(feature = "qlog")]
     pub fn set_qlog(
         &mut self, writer: Box<dyn std::io::Write>, title: String,
         description: String,
